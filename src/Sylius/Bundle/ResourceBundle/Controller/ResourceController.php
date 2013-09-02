@@ -107,13 +107,18 @@ class ResourceController extends FOSRestController
      */
     public function showAction()
     {
+        $event = $this->dispatchEvent('pre_show_action', $this->findOr404());
+        if (null !== $event->getResponse()) {
+            return $event->getResponse();
+        }
+
         $config = $this->getConfiguration();
 
         $view = $this
             ->view()
             ->setTemplate($config->getTemplate('show.html'))
             ->setTemplateVar($config->getResourceName())
-            ->setData($this->findOr404())
+            ->setData($event->getSubject())
         ;
 
         return $this->handleView($view);
@@ -124,21 +129,27 @@ class ResourceController extends FOSRestController
      */
     public function createAction(Request $request)
     {
-        $config = $this->getConfiguration();
-
         $resource = $this->createNew();
+
+        $event = $this->dispatchEvent('pre_create_action', $resource);
+        if ($event->getResponse() !== null) {
+            return $event->getResponse();
+        }
+
         $form = $this->getForm($resource);
 
         if ($request->isMethod('POST') && $form->bind($request)->isValid()) {
             $event = $this->create($resource);
-            if (!$event->isStopped()) {
-                $this->setFlash('success', 'create');
-
-                return $this->redirectTo($resource);
+            if ($event->getResponse() !== null) {
+                return $event->getResponse();
             }
 
-            $this->setFlash($event->getMessageType(), $event->getMessage(), $event->getMessageParams());
+            $this->setFlash('success', 'create');
+
+            return $this->redirectTo($resource);
         }
+
+        $config = $this->getConfiguration();
 
         if ($config->isApiRequest()) {
             return $this->handleView($this->view($form));
@@ -168,13 +179,14 @@ class ResourceController extends FOSRestController
 
         if (($request->isMethod('PUT') || $request->isMethod('POST')) && $form->bind($request)->isValid()) {
             $event = $this->update($resource);
-            if (!$event->isStopped()) {
-                $this->setFlash('success', 'update');
 
-                return $this->redirectTo($resource);
+            if ($event->getResponse() !== null) {
+                return $event->getResponse();
             }
 
-            $this->setFlash($event->getMessageType(), $event->getMessage(), $event->getMessageParams());
+            $this->setFlash('success', 'update');
+
+            return $this->redirectTo($resource);
         }
 
         if ($config->isApiRequest()) {
@@ -202,6 +214,10 @@ class ResourceController extends FOSRestController
 
         if ($request->request->get('confirmed', false)) {
             $event = $this->delete($resource);
+
+            if ($event->getResponse() !== null) {
+                return $event->getResponse();
+            }
 
             if ($request->isXmlHttpRequest()) {
                 return JsonResponse::create(array('id' => $request->get('id')));
@@ -306,9 +322,11 @@ class ResourceController extends FOSRestController
     public function create($resource)
     {
         $event = $this->dispatchEvent('pre_create', $resource);
-        if (!$event->isStopped()) {
-            $this->persistAndFlush($resource);
+        if ($event->getResponse() !== null) {
+            return $event->getResponse();
         }
+
+        $this->persistAndFlush($resource, 'create');
 
         return $event;
     }
@@ -316,9 +334,11 @@ class ResourceController extends FOSRestController
     public function update($resource)
     {
         $event = $this->dispatchEvent('pre_update', $resource);
-        if (!$event->isStopped()) {
-            $this->persistAndFlush($resource, 'update');
+        if ($event->getResponse() !== null) {
+            return $event->getResponse();
         }
+
+        $this->persistAndFlush($resource, 'update');
 
         return $event;
     }
@@ -326,30 +346,35 @@ class ResourceController extends FOSRestController
     public function delete($resource)
     {
         $event = $this->dispatchEvent('pre_delete', $resource);
-        if (!$event->isStopped()) {
-            $this->removeAndFlush($resource);
+        if ($event->getResponse() !== null) {
+            return $event->getResponse();
         }
+
+        $this->removeAndFlush($resource, 'delete');
 
         return $event;
     }
 
-    public function persistAndFlush($resource, $action = 'create')
+    public function persistAndFlush($resource, $type)
     {
         $manager = $this->getManager();
-
         $manager->persist($resource);
         $this->dispatchEvent($action, $resource);
+
         $manager->flush();
+
         $this->dispatchEvent(sprintf('post_%s', $action), $resource);
     }
 
     public function removeAndFlush($resource)
     {
         $manager = $this->getManager();
-
         $manager->remove($resource);
+
         $this->dispatchEvent('delete', $resource);
+
         $manager->flush();
+
         $this->dispatchEvent('post_delete', $resource);
     }
 
