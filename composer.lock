@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "6fb62b8098949cfb3ac0c4695a70dc7e",
+    "hash": "36ef382304f631aca8da7c0ed4fa6a46",
     "packages": [
         {
             "name": "athari/yalinqo",
@@ -899,12 +899,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfSymfony/FOSUserBundle.git",
-                "reference": "5e236332c3934fbc16b79eff3cf6ee9ee21b7519"
+                "reference": "f9ea1de0698e3055c9916e88c19f42e28844ef61"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/5e236332c3934fbc16b79eff3cf6ee9ee21b7519",
-                "reference": "5e236332c3934fbc16b79eff3cf6ee9ee21b7519",
+                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/f9ea1de0698e3055c9916e88c19f42e28844ef61",
+                "reference": "f9ea1de0698e3055c9916e88c19f42e28844ef61",
                 "shasum": ""
             },
             "require": {
@@ -959,7 +959,7 @@
             "keywords": [
                 "User management"
             ],
-            "time": "2013-10-02 23:38:05"
+            "time": "2013-10-09 22:58:46"
         },
         {
             "name": "fzaninotto/faker",
@@ -1284,6 +1284,117 @@
                 "stream"
             ],
             "time": "2013-07-30 22:07:23"
+        },
+        {
+            "name": "hwi/oauth-bundle",
+            "version": "0.3.0",
+            "target-dir": "HWI/Bundle/OAuthBundle",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hwi/HWIOAuthBundle.git",
+                "reference": "630d61ca64dfcafd02a13b61698fa99d7ec2c74e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hwi/HWIOAuthBundle/zipball/630d61ca64dfcafd02a13b61698fa99d7ec2c74e",
+                "reference": "630d61ca64dfcafd02a13b61698fa99d7ec2c74e",
+                "shasum": ""
+            },
+            "require": {
+                "kriswallsmith/buzz": "~0.7",
+                "php": ">=5.3.3",
+                "symfony/framework-bundle": "~2.1",
+                "symfony/options-resolver": "~2.1",
+                "symfony/security-bundle": "~2.1"
+            },
+            "require-dev": {
+                "doctrine/orm": "~2.2",
+                "symfony/twig-bundle": "~2.1",
+                "symfony/validator": "~2.1"
+            },
+            "suggest": {
+                "doctrine/doctrine-bundle": "to use Doctrine user provider",
+                "friendsofsymfony/user-bundle": "to connect FOSUB with this bundle",
+                "symfony/twig-bundle": "to use the Twig hwi_oauth_* functions"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.3-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "HWI\\Bundle\\OAuthBundle": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Geoffrey Bachelet",
+                    "email": "geoffrey.bachelet@gmail.com",
+                    "homepage": "https://github.com/ubermuda"
+                },
+                {
+                    "name": "Contributors",
+                    "homepage": "https://github.com/hwi/HWIOAuthBundle/contributors"
+                },
+                {
+                    "name": "Alexander",
+                    "email": "iam.asm89@gmail.com"
+                },
+                {
+                    "name": "Joseph Bielawski",
+                    "email": "stloyd@gmail.com"
+                }
+            ],
+            "description": "Support for authenticating users using both OAuth1.0a and OAuth2 in Symfony2.",
+            "homepage": "http://github.com/hwi/HWIOAuthBundle",
+            "keywords": [
+                "37signals",
+                "Authentication",
+                "amazon",
+                "bitbucket",
+                "bitly",
+                "box",
+                "dailymotion",
+                "deviantart",
+                "disqus",
+                "dropbox",
+                "eventbrite",
+                "facebook",
+                "firewall",
+                "flickr",
+                "foursquare",
+                "github",
+                "google",
+                "instagram",
+                "jira",
+                "linkedin",
+                "mail.ru",
+                "oauth",
+                "oauth1",
+                "oauth2",
+                "odnoklassniki",
+                "qq",
+                "security",
+                "sensio connect",
+                "sina weibo",
+                "stack exchange",
+                "stereomood",
+                "trello",
+                "twitch",
+                "twitter",
+                "vkontakte",
+                "windows live",
+                "wordpress",
+                "yahoo",
+                "yandex"
+            ],
+            "time": "2013-09-28 12:37:04"
         },
         {
             "name": "imagine/imagine",
@@ -2150,6 +2261,54 @@
             "time": "2013-07-19 00:03:27"
         },
         {
+            "name": "kriswallsmith/buzz",
+            "version": "v0.10",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kriswallsmith/Buzz.git",
+                "reference": "759432d66387e3433d3b06cb6f773b97225b9b17"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kriswallsmith/Buzz/zipball/759432d66387e3433d3b06cb6f773b97225b9b17",
+                "reference": "759432d66387e3433d3b06cb6f773b97225b9b17",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "3.7.*"
+            },
+            "suggest": {
+                "ext-curl": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Buzz": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kris Wallsmith",
+                    "email": "kris.wallsmith@gmail.com",
+                    "homepage": "http://kriswallsmith.net/"
+                }
+            ],
+            "description": "Lightweight HTTP client",
+            "homepage": "https://github.com/kriswallsmith/Buzz",
+            "keywords": [
+                "curl",
+                "http client"
+            ],
+            "time": "2013-05-19 03:41:15"
+        },
+        {
             "name": "liip/doctrine-cache-bundle",
             "version": "1.0.3",
             "target-dir": "Liip/DoctrineCacheBundle",
@@ -2256,12 +2415,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mathiasverraes/money.git",
-                "reference": "7ad21182d92451c461734069300e5668c8e2d2c5"
+                "reference": "a360a69c216b0937c1fee90ac294ed0ca127f20b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mathiasverraes/money/zipball/7ad21182d92451c461734069300e5668c8e2d2c5",
-                "reference": "7ad21182d92451c461734069300e5668c8e2d2c5",
+                "url": "https://api.github.com/repos/mathiasverraes/money/zipball/a360a69c216b0937c1fee90ac294ed0ca127f20b",
+                "reference": "a360a69c216b0937c1fee90ac294ed0ca127f20b",
                 "shasum": ""
             },
             "require": {
@@ -2303,7 +2462,7 @@
                 "Value Object",
                 "money"
             ],
-            "time": "2013-09-18 19:36:25"
+            "time": "2013-10-10 11:11:36"
         },
         {
             "name": "monolog/monolog",
@@ -2412,12 +2571,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/adrianmacneil/omnipay.git",
-                "reference": "381d1abbd12a7fc8d70497f4735aa83fdf71ead3"
+                "reference": "4de6c429661af33ce6323d9a58f60b4e82fcf35d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/adrianmacneil/omnipay/zipball/381d1abbd12a7fc8d70497f4735aa83fdf71ead3",
-                "reference": "381d1abbd12a7fc8d70497f4735aa83fdf71ead3",
+                "url": "https://api.github.com/repos/adrianmacneil/omnipay/zipball/4de6c429661af33ce6323d9a58f60b4e82fcf35d",
+                "reference": "4de6c429661af33ce6323d9a58f60b4e82fcf35d",
                 "shasum": ""
             },
             "require": {
@@ -2496,7 +2655,7 @@
                 "twocheckout",
                 "worldpay"
             ],
-            "time": "2013-10-06 07:38:53"
+            "time": "2013-10-10 23:03:59"
         },
         {
             "name": "pagerfanta/pagerfanta",
@@ -3080,16 +3239,16 @@
         },
         {
             "name": "symfony/symfony",
-            "version": "v2.3.5",
+            "version": "v2.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/symfony.git",
-                "reference": "aa5626cd2a359567c948ebdeeca68d948640302f"
+                "reference": "d0597156c4c03ceca039f6b7770a47397ba295f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/symfony/zipball/aa5626cd2a359567c948ebdeeca68d948640302f",
-                "reference": "aa5626cd2a359567c948ebdeeca68d948640302f",
+                "url": "https://api.github.com/repos/symfony/symfony/zipball/d0597156c4c03ceca039f6b7770a47397ba295f0",
+                "reference": "d0597156c4c03ceca039f6b7770a47397ba295f0",
                 "shasum": ""
             },
             "require": {
@@ -3184,7 +3343,7 @@
             "keywords": [
                 "framework"
             ],
-            "time": "2013-09-27 07:31:40"
+            "time": "2013-10-10 13:24:22"
         },
         {
             "name": "twig/extensions",

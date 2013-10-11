@@ -64,8 +64,6 @@ class DataContext extends BehatContext implements KernelAwareInterface
      */
     public function thereAreFollowingTaxonomies(TableNode $table)
     {
-        $manager = $this->getEntityManager();
-
         foreach ($table->getHash() as $data) {
             $this->thereIsTaxonomy($data['name']);
         }
