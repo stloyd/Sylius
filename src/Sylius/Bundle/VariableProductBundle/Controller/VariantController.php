@@ -11,8 +11,12 @@
 
 namespace Sylius\Bundle\VariableProductBundle\Controller;
 
+use Doctrine\Common\Persistence\ObjectRepository;
+use Sylius\Bundle\ProductBundle\Model\ProductInterface;
 use Sylius\Bundle\ResourceBundle\Controller\ResourceController;
+use Sylius\Bundle\VariableProductBundle\Generator\VariantGeneratorInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -28,6 +32,8 @@ class VariantController extends ResourceController
      * @param Request $request
      *
      * @return Response
+     *
+     * @throws NotFoundHttpException
      */
     public function generateAction(Request $request)
     {
@@ -38,7 +44,7 @@ class VariantController extends ResourceController
         $product = $this->findProductOr404($productId);
         $this->getGenerator()->generate($product);
 
-        $this->persistAndFlush($product);
+        $this->persistAndFlush($product, 'update');
 
         $this->setFlash('success', 'Variants have been successfully generated.');
 
@@ -90,6 +96,8 @@ class VariantController extends ResourceController
      * @param integer $id
      *
      * @return ProductInterface
+     *
+     * @throws NotFoundHttpException
      */
     protected function findProductOr404($id)
     {

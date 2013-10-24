@@ -9,6 +9,7 @@
  * file that was distributed with this source code.
  */
 
+use Symfony\Component\ClassLoader\ApcClassLoader;
 use Symfony\Component\HttpFoundation\Request;
 
 /*
@@ -26,6 +27,8 @@ if (!in_array(@$_SERVER['REMOTE_ADDR'], array(
 }
 
 $loader = require_once __DIR__.'/../app/bootstrap.php.cache';
+$loader = new ApcClassLoader('sylius', $loader);
+$loader->register(true);
 
 // Require kernel.
 require_once __DIR__.'/../app/AppKernel.php';

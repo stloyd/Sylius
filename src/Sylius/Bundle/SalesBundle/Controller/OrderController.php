@@ -28,9 +28,9 @@ class OrderController extends ResourceController
     public function confirmAction($confirmationToken)
     {
         $order = $this->findOr404(array('confirmationToken' => $confirmationToken));
-
         $order->setConfirmed(true);
-        $this->persistAndFlush($order);
+
+        $this->persistAndFlush($order, 'update');
 
         return $this->renderResponse('confirmed.html', array(
             'order' => $order

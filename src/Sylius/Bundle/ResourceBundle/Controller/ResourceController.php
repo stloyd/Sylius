@@ -12,11 +12,12 @@
 namespace Sylius\Bundle\ResourceBundle\Controller;
 
 use FOS\RestBundle\Controller\FOSRestController;
+use Sylius\Bundle\ResourceBundle\Event\FlashEvent;
+use Sylius\Bundle\ResourceBundle\Event\ResourceEvent;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Sylius\Bundle\ResourceBundle\Event\ResourceEvent;
 
 /**
  * Base resource controller for Sylius.
@@ -107,7 +108,7 @@ class ResourceController extends FOSRestController
     {
         $config = $this->getConfiguration();
 
-        $view =  $this
+        $view = $this
             ->view()
             ->setTemplate($config->getTemplate('show.html'))
             ->setTemplateVar($config->getResourceName())
@@ -128,14 +129,10 @@ class ResourceController extends FOSRestController
         $form = $this->getForm($resource);
 
         if ($request->isMethod('POST') && $form->bind($request)->isValid()) {
-            $event = $this->create($resource);
-            if (!$event->isStopped()) {
-                $this->setFlash('success', 'create');
+            $this->create($resource);
+            $this->setFlash('success', 'create');
 
-                return $this->redirectTo($resource);
-            }
-
-            $this->setFlash($event->getMessageType(), $event->getMessage(), $event->getMessageParams());
+            return $this->redirectTo($resource);
         }
 
         if ($config->isApiRequest()) {
@@ -165,14 +162,10 @@ class ResourceController extends FOSRestController
         $form = $this->getForm($resource);
 
         if (($request->isMethod('PUT') || $request->isMethod('POST')) && $form->bind($request)->isValid()) {
-            $event = $this->update($resource);
-            if (!$event->isStopped()) {
-                $this->setFlash('success', 'update');
+            $this->update($resource);
+            $this->setFlash('success', 'update');
 
-                return $this->redirectTo($resource);
-            }
-
-            $this->setFlash($event->getMessageType(), $event->getMessage(), $event->getMessageParams());
+            return $this->redirectTo($resource);
         }
 
         if ($config->isApiRequest()) {
@@ -198,13 +191,7 @@ class ResourceController extends FOSRestController
     {
         $resource = $this->findOr404();
 
-        $event = $this->delete($resource);
-
-        if ($event->isStopped()) {
-            $this->setFlash($event->getMessageType(), $event->getMessage(), $event->getMessageParams());
-
-            return $this->redirectTo($resource);
-        }
+        $this->delete($resource);
 
         $this->setFlash('success', 'delete');
 
@@ -281,66 +268,49 @@ class ResourceController extends FOSRestController
 
     public function create($resource)
     {
-        $manager = $this->getManager();
-
-        $event = $this->dispatchEvent('pre_create', $resource);
-
-        if (!$event->isStopped()) {
-            $manager->persist($resource);
-            $this->dispatchEvent('create', $resource);
-            $manager->flush();
-            $this->dispatchEvent('post_create', $resource);
-        }
-
-        return $event;
+        return $this->persistAndFlush($resource, 'create');
     }
 
     public function update($resource)
     {
-        $manager = $this->getManager();
-
-        $event = $this->dispatchEvent('pre_update', $resource);
-
-        if (!$event->isStopped()) {
-            $manager->persist($resource);
-            $this->dispatchEvent('update', $resource);
-            $manager->flush();
-            $this->dispatchEvent('post_update', $resource);
-        }
-
-        return $event;
+        return $this->persistAndFlush($resource, 'update');
     }
 
     public function delete($resource)
     {
-        $manager = $this->getManager();
+        return $this->removeAndFlush($resource);
+    }
 
-        $event = $this->dispatchEvent('pre_delete', $resource);
+    public function persistAndFlush($resource, $type)
+    {
+        $event = $this->dispatchEvent('pre_'.$type, $resource);
 
-        if (!$event->isStopped()) {
-            $manager->remove($resource);
-            $this->dispatchEvent('delete', $resource);
-            $manager->flush();
-            $this->dispatchEvent('post_delete', $resource);
-        }
+        $manager = $this->get($this->getConfiguration()->getServiceName('manager'));
+        $manager->persist($resource);
+
+        $this->dispatchEvent($type, $resource);
+
+        $manager->flush();
+
+        $this->dispatchEvent('post_'.$type, $resource);
 
         return $event;
     }
 
-    public function persistAndFlush($resource)
-    {
-        $manager = $this->getManager();
-
-        $manager->persist($resource);
-        $manager->flush();
-    }
-
     public function removeAndFlush($resource)
     {
-        $manager = $this->getManager();
+        $event = $this->dispatchEvent('pre_delete', $resource);
 
+        $manager = $this->get($this->getConfiguration()->getServiceName('manager'));
         $manager->remove($resource);
+
+        $this->dispatchEvent('delete', $resource);
+
         $manager->flush();
+
+        $this->dispatchEvent('post_delete', $resource);
+
+        return $event;
     }
 
     public function getRepository()
@@ -391,38 +361,27 @@ class ResourceController extends FOSRestController
         return $this->get('event_dispatcher')->dispatch($name, $eventOrResource);
     }
 
-    protected function setFlash($type, $event, $params = array())
+    /**
+     * @param string $type
+     * @param string $message
+     * @param array  $params
+     *
+     * @return FlashEvent
+     */
+    protected function setFlash($type, $message, $params = array())
     {
-        return $this
-            ->get('session')
-            ->getFlashBag()
-            ->add($type, $this->generateFlashMessage($event, $params))
-        ;
-    }
-
-    protected function generateFlashMessage($event, $params = array())
-    {
-        $config = $this->getConfiguration();
-
-        $message = $config->getFlashMessage($event);
-        $translatedMessage = $this->translateFlashMessage($message, $params);
-
-        if ($message !== $translatedMessage) {
-            return $translatedMessage;
-        }
-
-        return $this->translateFlashMessage('sylius.resource.'.$event, $params);
-    }
-
-    protected function translateFlashMessage($message, $params = array())
-    {
-        $resource = ucfirst(str_replace('_', ' ', $this->getConfiguration()->getResourceName()));
-
-        return $this->get('translator')->trans(
-            $message,
-            array_merge(array('%resource%' => $resource), $params),
-            'flashes'
+        $params = array_merge(
+            array(
+                '%resource%' => ucfirst(str_replace('_', ' ', $this->getConfiguration()->getResourceName()))
+            ),
+            $params
         );
+
+        $event = new FlashEvent(false !== strpos($message, ' ') ? $this->getConfiguration()->getFlashMessage($message) : $message);
+        $event->setMessageParameters($params);
+        $event->setType($type);
+
+        return $this->dispatchEvent($type, $event);
     }
 
     protected function getResourceResolver()

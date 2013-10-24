@@ -11,9 +11,12 @@
 
 namespace Sylius\Bundle\SettingsBundle\Controller;
 
+use Sylius\Bundle\SettingsBundle\Form\Factory\SettingsFormFactory;
+use Sylius\Bundle\SettingsBundle\Manager\SettingsManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Settings controller.
@@ -45,15 +48,12 @@ class SettingsController extends Controller
         if ($request->isMethod('POST') && $form->bind($request)->isValid()) {
             $manager->saveSettings($namespace, $form->getData());
 
-            $message = $this->getTranslator()->trans('sylius.settings.update', array(), 'flashes');
-            $this->get('session')->getFlashBag()->add('success', $message);
+            $request->getSession()->getFlashBag()->add('success', $this->getTranslator()->trans('sylius.settings.update', array(), 'flashes'));
 
             return $this->redirect($request->headers->get('referer'));
         }
 
-        $template = $request->attributes->get('template');
-
-        return $this->render($template, array(
+        return $this->render($request->attributes->get('template'), array(
             'settings' => $settings,
             'form'     => $form->createView()
         ));

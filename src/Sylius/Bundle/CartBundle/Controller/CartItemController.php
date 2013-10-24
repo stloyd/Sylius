@@ -17,8 +17,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 use Sylius\Bundle\CartBundle\SyliusCartEvents;
 use Sylius\Bundle\CartBundle\Event\CartItemEvent;
-use Sylius\Bundle\CartBundle\Event\FlashEvent;
 use Sylius\Bundle\CartBundle\Resolver\ItemResolvingException;
+use Sylius\Bundle\ResourceBundle\Event\FlashEvent;
 
 /**
  * Cart item controller.
@@ -50,17 +50,16 @@ class CartItemController extends Controller
      */
     public function addAction(Request $request)
     {
-        $cart = $this->getCurrentCart();
-        $emptyItem = $this->createNew();
-
         try {
-            $item = $this->getResolver()->resolve($emptyItem, $request);
+            $item = $this->getResolver()->resolve($this->createNew(), $request);
         } catch (ItemResolvingException $exception) {
             // Write flash message
             $this->dispatchEvent(SyliusCartEvents::ITEM_ADD_ERROR, new FlashEvent($exception->getMessage()));
 
             return $this->redirectToCartSummary();
         }
+
+        $cart = $this->getCurrentCart();
 
         $event = new CartItemEvent($cart, $item);
         $event->isFresh(true);

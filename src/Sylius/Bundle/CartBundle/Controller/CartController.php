@@ -11,13 +11,12 @@
 
 namespace Sylius\Bundle\CartBundle\Controller;
 
+use Sylius\Bundle\CartBundle\SyliusCartEvents;
+use Sylius\Bundle\CartBundle\Event\CartEvent;
+use Sylius\Bundle\ResourceBundle\Event\FlashEvent;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
-use Sylius\Bundle\CartBundle\SyliusCartEvents;
-use Sylius\Bundle\CartBundle\Event\CartEvent;
-use Sylius\Bundle\CartBundle\Event\FlashEvent;
 
 /**
  * Default cart controller.
@@ -33,7 +32,7 @@ class CartController extends Controller
      * Displays current cart summary page.
      * The parameters includes the form created from `sylius_cart` type.
      *
-     * @param Request
+     * @param $request Request
      *
      * @return Response
      */
