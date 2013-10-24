@@ -11,12 +11,12 @@
 
 namespace Sylius\Bundle\SettingsBundle\Controller;
 
+use Sylius\Bundle\ResourceBundle\Event\FlashEvent;
 use Sylius\Bundle\SettingsBundle\Form\Factory\SettingsFormFactoryInterface;
 use Sylius\Bundle\SettingsBundle\Manager\SettingsManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Settings controller.
@@ -48,15 +48,14 @@ class SettingsController extends Controller
         if ($request->isMethod('POST') && $form->bind($request)->isValid()) {
             $manager->saveSettings($namespace, $form->getData());
 
-            $message = $this->getTranslator()->trans('sylius.settings.update', array(), 'flashes');
-            $request->getSession()->getFlashBag()->add('success', $message);
+            $this->get('event_dispatcher')->dispatch('sylius.settings.flash.update', new FlashEvent('sylius.settings.update'));
 
             if ($request->headers->has('referer')) {
                 return $this->redirect($request->headers->get('referer'));
             }
         }
 
-        return $this->render($request->attributes->get('template', 'SyliusSettingsBundle:Settings:update.html.twig'), array(
+        return $this->render($request->attributes->get('template'), array(
             'settings' => $settings,
             'form'     => $form->createView()
         ));
@@ -80,15 +79,5 @@ class SettingsController extends Controller
     protected function getSettingsFormFactory()
     {
         return $this->get('sylius.settings.form_factory');
-    }
-
-    /**
-     * Get translator.
-     *
-     * @return TranslatorInterface
-     */
-    protected function getTranslator()
-    {
-        return $this->get('translator');
     }
 }

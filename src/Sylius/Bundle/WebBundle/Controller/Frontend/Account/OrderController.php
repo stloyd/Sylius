@@ -15,6 +15,7 @@ use Sylius\Bundle\CoreBundle\Model\OrderInterface;
 use Sylius\Bundle\CoreBundle\Repository\OrderRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
@@ -44,8 +45,10 @@ class OrderController extends Controller
     /**
      * Get single order of the current user
      *
-     * @param $number
+     * @param string $number
+     *
      * @return Response
+     *
      * @throws NotFoundHttpException
      * @throws AccessDeniedException
      */
@@ -63,8 +66,10 @@ class OrderController extends Controller
     /**
      * Renders an invoice as PDF
      *
-     * @param $number
+     * @param string $number
+     *
      * @return Response
+     *
      * @throws NotFoundHttpException
      * @throws AccessDeniedException
      */
@@ -116,8 +121,10 @@ class OrderController extends Controller
     /**
      * Finds order or throws 404
      *
-     * @param $number
-     * @return Order
+     * @param string $number
+     *
+     * @return OrderInterface
+     *
      * @throws NotFoundHttpException
      */
     private function findOrderOr404($number)
@@ -132,7 +139,8 @@ class OrderController extends Controller
     /**
      * Accesses order or throws 403
      *
-     * @param  Order                 $order
+     * @param OrderInterface $order
+     *
      * @throws AccessDeniedException
      */
     private function accessOrderOr403(OrderInterface $order)

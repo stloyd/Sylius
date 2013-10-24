@@ -14,9 +14,8 @@ namespace Sylius\Bundle\CoreBundle\EventListener;
 use Sylius\Bundle\CoreBundle\Model\OrderInterface;
 use Sylius\Bundle\PromotionsBundle\Processor\PromotionProcessorInterface;
 use Sylius\Bundle\PromotionsBundle\SyliusPromotionEvents;
+use Sylius\Bundle\ResourceBundle\Event\FlashEvent;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Order promotion listener.
@@ -33,33 +32,21 @@ class OrderPromotionListener
     protected $promotionProcessor;
 
     /**
-     * @var Session
-     */
-    protected $session;
-
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-
-    /**
      * Constructor.
      *
      * @param PromotionProcessorInterface $promotionProcessor
-     * @param SessionInterface            $session
-     * @param TranslatorInterface         $translator
      */
-    public function __construct(PromotionProcessorInterface $promotionProcessor, SessionInterface $session, TranslatorInterface $translator)
+    public function __construct(PromotionProcessorInterface $promotionProcessor)
     {
         $this->promotionProcessor = $promotionProcessor;
-        $this->session = $session;
-        $this->translator = $translator;
     }
 
     /**
      * Get the order from event and run the promotion processor on it.
      *
      * @param GenericEvent $event
+     *
+     * @throws \InvalidArgumentException
      */
     public function processOrderPromotion(GenericEvent $event)
     {
@@ -78,24 +65,22 @@ class OrderPromotionListener
 
     /**
      * Handle coupons added by the user in his cart.
-     * TODO: maybe replace this with a unified FlashListener.
      *
      * @param GenericEvent $event
      */
     public function handleCouponPromotion(GenericEvent $event)
     {
         if (SyliusPromotionEvents::COUPON_ELIGIBLE === $event->getName()) {
-            $type = 'success';
+            $name    = 'sylius.promotion_coupon.flash.eligible';
             $message = 'sylius.promotion_coupon.eligible';
         } elseif (SyliusPromotionEvents::COUPON_NOT_ELIGIBLE === $event->getName()) {
-            $type = 'error';
+            $name    = 'sylius.promotion_coupon.flash.not_eligible';
             $message = 'sylius.promotion_coupon.not_eligible';
         } else {
-            $type = 'error';
+            $name    = 'sylius.promotion_coupon.flash.invalid';
             $message = 'sylius.promotion_coupon.invalid';
         }
 
-        $message = $this->translator->trans($message, array(), 'flashes');
-        $this->session->getFlashBag()->add($type, $message);
+        $event->getDispatcher()->dispatch($name, new FlashEvent($message));
     }
 }

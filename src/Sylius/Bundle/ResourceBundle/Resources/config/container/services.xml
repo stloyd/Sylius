@@ -18,6 +18,7 @@
 
     <parameters>
         <parameter key="sylius_resource.twig.class">Sylius\Bundle\ResourceBundle\Twig\SyliusResourceExtension</parameter>
+        <parameter key="sylius.event_subscriber.flash_listener.class">Sylius\Bundle\ResourceBundle\EventListener\FlashListener</parameter>
         <parameter key="sylius.event_subscriber.load_metadata.class">Sylius\Bundle\ResourceBundle\EventListener\LoadMetadataSubscriber</parameter>
     </parameters>
 
@@ -33,6 +34,11 @@
         <service id="sylius.event_subscriber.load_metadata" class="%sylius.event_subscriber.load_metadata.class%">
             <tag name="doctrine.event_subscriber" />
             <argument>%sylius.config.classes%</argument>
+        </service>
+
+        <service id="sylius.event_subscriber.flash_listener" class="%sylius.event_subscriber.flash_listener.class%" abstract="true">
+            <argument type="service" id="session" />
+            <argument type="service" id="translator" />
         </service>
     </services>
 
