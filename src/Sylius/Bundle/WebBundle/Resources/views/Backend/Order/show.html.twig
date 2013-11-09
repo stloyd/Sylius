@@ -125,7 +125,7 @@
 <div class="well">
     {{ buttons.manage(path('sylius_backend_order_index'), 'sylius.order.manage'|trans) }}
     {{ buttons.edit(path('sylius_backend_order_update', {'id': order.id})) }}
-    {{ buttons.delete(path('sylius_backend_order_delete', {'id': order.id})) }}
+    {{ buttons.delete(path('sylius_backend_order_delete', {'id': order.id}), null, false, true, path('sylius_backend_order_index')) }}
 </div>
 <table class="table table-striped table-bordered">
     <thead>
