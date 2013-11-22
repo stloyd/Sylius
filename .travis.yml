@@ -6,6 +6,9 @@ php:
   - 5.5
 
 services: mongodb
+addons:
+  hosts:
+    - example.com
 
 before_install:
     - sudo apt-get update > /dev/null
@@ -15,7 +18,6 @@ install:
     - sudo apt-get install -y --force-yes apache2 libapache2-mod-php5 php5-curl php5-mysql php5-intl wkhtmltopdf
     - sudo sed -i -e "s,/var/www,$(pwd)/web,g" /etc/apache2/sites-available/default
     - sudo sed -i -e "/DocumentRoot/i\ServerName example.com" /etc/apache2/sites-available/default
-    - echo "127.0.0.1 example.com" | sudo tee -a /etc/hosts
     - sudo sed -i -e "s/export APACHE_RUN_USER=.*/export APACHE_RUN_USER=travis/ ; s/export APACHE_RUN_GROUP=.*/export APACHE_RUN_GROUP=travis/" /etc/apache2/envvars
     - sudo chown -R travis:travis /var/lock/apache2
     - curl http://selenium.googlecode.com/files/selenium-server-standalone-2.37.0.jar > selenium.jar
@@ -29,7 +31,6 @@ before_script:
     - composer install -n --prefer-source
     - composer update doctrine/mongodb-odm
 
-    - app/console --env=test cache:clear
     - app/console doctrine:database:create --env=test > /dev/null
     - app/console doctrine:schema:create --env=test > /dev/null
     - app/console cache:warmup --env=test > /dev/null
