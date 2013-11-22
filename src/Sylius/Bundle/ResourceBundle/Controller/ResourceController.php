@@ -204,10 +204,15 @@ class ResourceController extends FOSRestController
             $event = $this->delete($resource);
 
             if ($request->isXmlHttpRequest()) {
+
+                if ($request->get('redirect')) {
+                    $this->setFlash('success', 'delete');
+                }
+
                 return new JsonResponse(array(
                     'id'    => $request->get('id'),
                     'flash' => array(
-                        'message' => $this->translateFlashMessage('delete', array()),
+                        'message' => $this->generateFlashMessage('delete', array()),
                         'type'    => 'success'
                     )
                 ));

@@ -22,16 +22,22 @@
 
         $('#confirmation-modal .btn-danger').click(function(e) {
             e.preventDefault();
-
+            var parentForm = deleteButton.parent();
+            var redirect = parentForm.data('redirect');
             $.ajax({
                 type: "DELETE",
-                url: deleteButton.parent().attr('action'),
-                data: { confirmed: "1" },
+                url: parentForm.attr('action'),
+                data: { confirmed: "1", redirect: (redirect != null) },
                 cache: false
             }).fail(function(jqXHR, textStatus) {
                 $('.alert-js').addClass('alert-error');
                 $('.alert-js').append(textStatus).removeClass('hidden');
             }).done(function(json) {
+                if (redirect != null) {
+                    window.location.href = redirect;
+
+                    return;
+                }
                 $('#confirmation-modal').modal('hide');
                 $('#'+json.id).remove();
 

@@ -810,10 +810,10 @@ class WebUser extends MinkContext implements KernelAwareInterface
      */
     public function iClickOnConfirmationModal($button)
     {
-        $this->assertSession()->elementExists('css', '#confirmationModalContainer');
+        $this->assertSession()->elementExists('css', '#confirmation-modal');
 
-        $modalContainer = $this->getSession()->getPage()->find('css', '#confirmationModalContainer');
-        $primaryButton = $modalContainer->find('css', sprintf('a:contains("%s")' ,$button));
+        $modalContainer = $this->getSession()->getPage()->find('css', '#confirmation-modal');
+        $primaryButton = $modalContainer->find('css', sprintf('span:contains("%s")', $button));
 
         $this->getSession()->wait(100);
 
@@ -824,6 +824,8 @@ class WebUser extends MinkContext implements KernelAwareInterface
         $this->getSession()->wait(100);
 
         $primaryButton->press();
+
+        $this->getSession()->wait(1000);
     }
 
     /**
