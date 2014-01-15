@@ -11,11 +11,13 @@
 
 namespace Sylius\Bundle\CoreBundle\Settings;
 
+use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\ORM\EntityRepository;
 use Sylius\Bundle\SettingsBundle\Schema\SchemaInterface;
 use Sylius\Bundle\SettingsBundle\Schema\SettingsBuilderInterface;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\Currency;
-use Symfony\Component\Validator\Constraints\Locale;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
@@ -31,11 +33,18 @@ class GeneralSettingsSchema implements SchemaInterface
     protected $defaults;
 
     /**
-     * @param array $defaults
+     * @var ObjectRepository
      */
-    public function __construct(array $defaults = array())
+    protected $repository;
+
+    /**
+     * @param array            $defaults
+     * @param ObjectRepository $repository
+     */
+    public function __construct(array $defaults = array(), ObjectRepository $repository)
     {
         $this->defaults = $defaults;
+        $this->repository = $repository;
     }
 
     /**
@@ -48,15 +57,12 @@ class GeneralSettingsSchema implements SchemaInterface
                 'title'            => 'Sylius - Modern ecommerce for Symfony2',
                 'meta_keywords'    => 'symfony, sylius, ecommerce, webshop, shopping cart',
                 'meta_description' => 'Sylius is modern ecommerce solution for PHP. Based on the Symfony2 framework.',
-                'locale'           => 'en',
-                'currency'         => 'USD',
             ), $this->defaults))
             ->setAllowedTypes(array(
                 'title'            => array('string'),
                 'meta_keywords'    => array('string'),
                 'meta_description' => array('string'),
-                'locale'           => array('string'),
-                'currency'         => array('string'),
+                'locale'           => array('string', 'integer'),
             ))
         ;
     }
@@ -85,20 +91,34 @@ class GeneralSettingsSchema implements SchemaInterface
                     new NotBlank()
                 )
             ))
-            ->add('locale', 'locale', array(
-                'label'       => 'sylius.form.settings.general.locale',
-                'constraints' => array(
+            ->add('locale', 'entity', array(
+                'label'         => 'sylius.form.settings.general.locale',
+                'empty_value'   => 'sylius.form.settings.general.choose_locale',
+                'class'         => 'Sylius\Bundle\CoreBundle\Model\Locale',
+                'query_builder' => function(EntityRepository $er) {
+                        return $er->createQueryBuilder('l')
+                            ->where('l.enabled = 1');
+                    },
+                'constraints'   => array(
                     new NotBlank(),
-                    new Locale(),
-                )
-            ))
-            ->add('currency', 'sylius_currency_choice', array(
-                'label'       => 'sylius.form.settings.general.currency',
-                'constraints' => array(
-                    new NotBlank(),
-                    new Currency(),
                 )
             ))
         ;
+
+        $repository = $this->repository;
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($repository) {
+            $settings = $event->getData();
+
+            if (null !== $settings['locale']) {
+                $settings['locale'] = $repository->findOneBy(array('id' => $settings['locale']));
+            }
+        });
+        $builder->addEventListener(FormEvents::SUBMIT, function(FormEvent $event) use ($repository) {
+            $settings = $event->getData();
+
+            if (is_object($settings['locale'])) {
+                $settings['locale'] = $settings['locale']->getId();
+            }
+        });
     }
 }

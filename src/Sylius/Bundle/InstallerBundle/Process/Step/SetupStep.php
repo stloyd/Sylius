@@ -39,7 +39,6 @@ class SetupStep extends ControllerStep
     {
         $request = $this->getRequest();
         $form = $this->createForm('sylius_setup');
-        $em = $this->getDoctrine()->getManager();
 
         if ($form->handleRequest($request)->isValid()) {
             $params = $this->get('doctrine')->getConnection()->getParams();
@@ -50,6 +49,9 @@ class SetupStep extends ControllerStep
             if (!in_array($dbname, $schemaManager->listDatabases())) {
                 $schemaManager->createDatabase($dbname);
             }
+
+            $em = $this->getDoctrine()->getEntityManager();
+
             $schemaTool = new SchemaTool($em);
             $schemaTool->dropSchema($em->getMetadataFactory()->getAllMetadata());
             $schemaTool->createSchema($em->getMetadataFactory()->getAllMetadata());

@@ -12,16 +12,10 @@
 namespace Sylius\Bundle\SettingsBundle\Manager;
 
 use Doctrine\Common\Cache\Cache;
-use Doctrine\Common\Persistence\ObjectManager;
-use Sylius\Bundle\SettingsBundle\Event\SettingsEvent;
 use Sylius\Bundle\SettingsBundle\Model\Settings;
 use Sylius\Bundle\SettingsBundle\Schema\SchemaRegistryInterface;
 use Sylius\Bundle\SettingsBundle\Schema\SettingsBuilder;
-use Sylius\Component\Resource\Repository\RepositoryInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Validator\ConstraintViolationListInterface;
-use Symfony\Component\Validator\Exception\ValidatorException;
-use Symfony\Component\Validator\ValidatorInterface;
+use Sylius\Bundle\SettingsBundle\Storage\StorageInterface;
 
 /**
  * Settings manager.
@@ -38,18 +32,11 @@ class SettingsManager implements SettingsManagerInterface
     protected $schemaRegistry;
 
     /**
-     * Object manager.
+     * Parameter storage.
      *
-     * @var ObjectManager
+     * @var StorageInterface
      */
-    protected $parameterManager;
-
-    /**
-     * Parameter object repository.
-     *
-     * @var RepositoryInterface
-     */
-    protected $parameterRepository;
+    protected $storage;
 
     /**
      * Cache.
@@ -83,23 +70,13 @@ class SettingsManager implements SettingsManagerInterface
      * Constructor.
      *
      * @param SchemaRegistryInterface $schemaRegistry
-     * @param ObjectManager $parameterManager
-     * @param RepositoryInterface $parameterRepository
-     * @param Cache $cache
-     * @param ValidatorInterface $validator
-     * @param EventDispatcherInterface $eventDispatcher
+     * @param StorageInterface        $storage
+     * @param Cache                   $cache
      */
-    public function __construct(
-        SchemaRegistryInterface $schemaRegistry,
-        ObjectManager $parameterManager,
-        RepositoryInterface $parameterRepository,
-        Cache $cache,
-        ValidatorInterface $validator,
-        EventDispatcherInterface $eventDispatcher
-    ) {
+    public function __construct(SchemaRegistryInterface $schemaRegistry, StorageInterface $storage, Cache $cache)
+    {
         $this->schemaRegistry = $schemaRegistry;
-        $this->parameterManager = $parameterManager;
-        $this->parameterRepository = $parameterRepository;
+        $this->storage = $storage;
         $this->cache = $cache;
         $this->validator = $validator;
         $this->eventDispatcher = $eventDispatcher;
@@ -120,9 +97,9 @@ class SettingsManager implements SettingsManagerInterface
             $parameters = $this->getParameters($namespace);
         }
 
-        $schema = $this->schemaRegistry->getSchema($namespace);
-
         $settingsBuilder = new SettingsBuilder();
+
+        $schema = $this->schemaRegistry->getSchema($namespace);
         $schema->buildSettings($settingsBuilder);
 
         $parameters = $this->transformParameters($settingsBuilder, $parameters);
@@ -144,8 +121,9 @@ class SettingsManager implements SettingsManagerInterface
 
         $parameters = $settingsBuilder->resolve($settings->getParameters());
 
-        foreach ($settingsBuilder->getTransformers() as $parameter => $transformer) {
-            if (array_key_exists($parameter, $parameters)) {
+        foreach (array_keys($parameters) as $parameter) {
+            $transformer = $settingsBuilder->getTransformer($parameter);
+            if ($transformer) {
                 $parameters[$parameter] = $transformer->transform($parameters[$parameter]);
             }
         }
@@ -155,40 +133,9 @@ class SettingsManager implements SettingsManagerInterface
             $this->resolvedSettings[$namespace]->setParameters($transformedParameters);
         }
 
-        $persistedParameters = $this->parameterRepository->findBy(array('namespace' => $namespace));
-        $persistedParametersMap = array();
+        $settings->setParameters($parameters);
 
-        foreach ($persistedParameters as $parameter) {
-            $persistedParametersMap[$parameter->getName()] = $parameter;
-        }
-
-        $this->eventDispatcher->dispatch(SettingsEvent::PRE_SAVE, new SettingsEvent($namespace, $settings, $parameters));
-
-        foreach ($parameters as $name => $value) {
-            if (isset($persistedParametersMap[$name])) {
-                $persistedParametersMap[$name]->setValue($value);
-            } else {
-                $parameter = $this->parameterRepository->createNew();
-
-                $parameter
-                    ->setNamespace($namespace)
-                    ->setName($name)
-                    ->setValue($value)
-                ;
-
-                /* @var $errors ConstraintViolationListInterface */
-                $errors = $this->validator->validate($parameter);
-                if (0 < $errors->count()) {
-                    throw new ValidatorException($errors->get(0)->getMessage());
-                }
-
-                $this->parameterManager->persist($parameter);
-            }
-        }
-
-        $this->parameterManager->flush();
-
-        $this->eventDispatcher->dispatch(SettingsEvent::POST_SAVE, new SettingsEvent($namespace, $settings, $parameters));
+        $this->storage->save($namespace, $settings);
 
         $this->cache->save($namespace, $parameters);
     }
@@ -202,13 +149,9 @@ class SettingsManager implements SettingsManagerInterface
      */
     private function getParameters($namespace)
     {
-        $parameters = array();
+        $settings = $this->storage->load($namespace);
 
-        foreach ($this->parameterRepository->findBy(array('namespace' => $namespace)) as $parameter) {
-            $parameters[$parameter->getName()] = $parameter->getValue();
-        }
-
-        return $parameters;
+        return $settings->getParameters();
     }
 
     private function transformParameters(SettingsBuilder $settingsBuilder, array $parameters)

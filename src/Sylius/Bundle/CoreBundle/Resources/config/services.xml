@@ -102,6 +102,7 @@
                 <argument key="currency">%sylius.money.currency%</argument>
                 <argument key="locale">%sylius.locale%</argument>
             </argument>
+            <argument type="service" id="sylius.repository.locale" />
             <tag name="sylius.settings_schema" namespace="general" />
         </service>
         <service id="sylius.settings_schema.taxation" class="%sylius.settings_schema.taxation.class%">

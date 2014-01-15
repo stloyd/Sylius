@@ -31,18 +31,26 @@ class SettingsBuilder extends OptionsResolver implements SettingsBuilderInterfac
     /**
      * {@inheritdoc}
      */
-    public function setTransformer($parameterName, ParameterTransformerInterface $transformer)
+    public function getTransformers()
     {
-        $this->transformers[$parameterName] = $transformer;
-
-        return $this;
+        return $this->transformers;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getTransformers()
+    public function getTransformer($parameterName)
     {
-        return $this->transformers;
+        return isset($this->transformers[$parameterName]) ? $this->transformers[$parameterName] : null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setTransformer($parameterName, ParameterTransformerInterface $transformer)
+    {
+        $this->transformers[$parameterName] = $transformer;
+
+        return $this;
     }
 }

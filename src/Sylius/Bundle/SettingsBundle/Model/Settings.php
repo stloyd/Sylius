@@ -36,7 +36,7 @@ class Settings implements \ArrayAccess
     }
 
     /**
-     * {@inheritdoc}
+     * @return ParameterInterface[]
      */
     public function getParameters()
     {
@@ -64,7 +64,7 @@ class Settings implements \ArrayAccess
      */
     public function get($name)
     {
-        if (!$this->has($name)) {
+        if (!array_key_exists($name, $this->parameters)) {
             throw new \InvalidArgumentException(sprintf('Parameter with name "%s" does not exist.', $name));
         }
 
@@ -84,7 +84,7 @@ class Settings implements \ArrayAccess
      */
     public function remove($name)
     {
-        if (!$this->has($name)) {
+        if (!array_key_exists($name, $this->parameters)) {
             throw new \InvalidArgumentException(sprintf('Parameter with name "%s" does not exist.', $name));
         }
 

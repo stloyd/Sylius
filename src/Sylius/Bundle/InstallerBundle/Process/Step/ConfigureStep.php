@@ -36,7 +36,7 @@ class ConfigureStep extends ControllerStep
         $form = $this->createConfigurationForm();
 
         if ($form->handleRequest($request)->isValid()) {
-            $this->get('sylius.installer.yaml_persister')->dump($form->getData());
+            $this->get('sylius.settings.yaml_storage')->save('install', $form->getData());
 
             return $this->complete();
         }
@@ -51,7 +51,7 @@ class ConfigureStep extends ControllerStep
     {
         return $this->createForm(
             'sylius_configuration',
-            $this->get('sylius.installer.yaml_persister')->parse()
+            $this->get('sylius.settings.yaml_storage')->load('install')
         );
     }
 }

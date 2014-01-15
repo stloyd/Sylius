@@ -39,14 +39,26 @@
 
         <service id="sylius.settings.manager" class="%sylius.settings.manager.class%">
             <argument type="service" id="sylius.settings.schema_registry" />
-            <argument type="service" id="sylius.manager.parameter" />
-            <argument type="service" id="sylius.repository.parameter" />
+            <argument type="service" id="sylius.settings.storage.yaml" />
             <argument type="service" id="sylius.settings.cache" />
             <argument type="service" id="validator" />
             <argument type="service" id="event_dispatcher" />
         </service>
 
         <service id="sylius.settings.schema_registry" class="%sylius.settings.schema_registry.class%" />
+
+        <service id="sylius.settings.storage.yaml" class="Sylius\Bundle\SettingsBundle\Storage\YamlStorage">
+            <argument>%kernel.root_dir%/config/settings</argument>
+        </service>
+
+        <service id="sylius.settings.storage.docrine_orm" class="Sylius\Bundle\SettingsBundle\Storage\DoctrineORMStorage">
+            <argument type="service" id="sylius.manager.parameter" />
+        </service>
+
+        <service id="sylius.settings.twig" class="%sylius.settings.twig.class%">
+            <argument type="service" id="sylius.settings.manager" />
+            <tag name="twig.extension" />
+        </service>
     </services>
 
 </container>
