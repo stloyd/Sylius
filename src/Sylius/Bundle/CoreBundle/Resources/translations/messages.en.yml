@@ -29,6 +29,9 @@ sylius:
         locale:
             code: Code
             enabled: Enabled
+            currency: Currency
+            select_code: Select code
+            select_currency: Select currency
         order_filter:
             created_at_from: Created after
             created_at_to: Created before

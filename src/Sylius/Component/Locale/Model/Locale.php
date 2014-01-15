@@ -21,7 +21,7 @@ class Locale implements LocaleInterface
     /**
      * Id
      *
-     * @var integer
+     * @var int
      */
     protected $id;
 
@@ -33,9 +33,16 @@ class Locale implements LocaleInterface
     protected $code;
 
     /**
+     * Currency.
+     *
+     * @var string
+     */
+    protected $currency;
+
+    /**
      * Activation status.
      *
-     * @var Boolean
+     * @var bool
      */
     protected $enabled = true;
 
@@ -56,6 +63,11 @@ class Locale implements LocaleInterface
     public function __construct()
     {
         $this->createdAt = new \DateTime();
+    }
+
+    public function __toString()
+    {
+        return sprintf('%s - %s', $this->code, $this->currency);
     }
 
     /**
@@ -89,6 +101,24 @@ class Locale implements LocaleInterface
     /**
      * {@inheritdoc}
      */
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setCurrency($currency)
+    {
+        $this->currency = strtoupper($currency);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function isEnabled()
     {
         return $this->enabled;
@@ -99,7 +129,7 @@ class Locale implements LocaleInterface
      */
     public function setEnabled($enabled)
     {
-        $this->enabled = (Boolean) $enabled;
+        $this->enabled = (bool) $enabled;
     }
 
     /**

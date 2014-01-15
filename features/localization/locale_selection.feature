@@ -6,11 +6,11 @@ Feature: Locale selection
 
     Background:
         And there are following locales configured:
-            | code  | enabled |
-            | de_DE | yes     |
-            | en_US | yes     |
-            | fr_FR | no      |
-            | pl_PL | yes     |
+            | code  | currency | enabled |
+            | de_DE | EUR      | yes     |
+            | en_US | USD      | yes     |
+            | fr_FR | EUR      | no      |
+            | pl_PL | PLN      | yes     |
         And there is default currency configured
 
     Scenario: Only enabled locales are visible to the user

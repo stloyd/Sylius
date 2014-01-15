@@ -18,14 +18,39 @@
 
     <class name="Sylius\Component\Locale\Model\Locale">
         <constraint name="Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity">
-            <option name="fields">code</option>
+            <option name="fields">
+                <value>code</value>
+                <value>currency</value>
+            </option>
             <option name="message">sylius.locale.code.unique</option>
-            <option name="groups">sylius</option>
+            <option name="groups">
+                <value>sylius</value>
+            </option>
         </constraint>
         <property name="code">
             <constraint name="NotBlank">
                 <option name="message">sylius.locale.code.not_blank</option>
-                <option name="groups">sylius</option>
+                <option name="groups">
+                    <value>sylius</value>
+                </option>
+            </constraint>
+            <constraint name="Locale">
+                <option name="groups">
+                    <value>sylius</value>
+                </option>
+            </constraint>
+        </property>
+        <property name="currency">
+            <constraint name="NotBlank">
+                <option name="message">sylius.locale.currency.not_blank</option>
+                <option name="groups">
+                    <value>sylius</value>
+                </option>
+            </constraint>
+            <constraint name="Currency">
+                <option name="groups">
+                    <value>sylius</value>
+                </option>
             </constraint>
         </property>
     </class>

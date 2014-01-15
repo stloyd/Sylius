@@ -5,15 +5,17 @@ Feature: Managing locales
     I want to be able to configure locales
 
     Background:
-        Given  there are following currencies configured:
+        Given there are following currencies configured:
             | code | exchange rate | enabled |
             | EUR  | 1.00000       | yes     |
+            | USD  | 0.57000       | yes     |
         And there are following locales configured:
-            | code  | activated |
-            | de_DE | yes       |
-            | en_US | no        |
-            | fr_FR | yes       |
+            | code  | currency | enabled |
+            | de_DE | EUR      | yes     |
+            | en_US | USD      | no      |
+            | fr_FR | EUR      | yes     |
          And I am logged in as administrator
+
     Scenario: Seeing index of all locales
         Given I am on the dashboard page
         When I follow "Locales"
@@ -34,6 +36,7 @@ Feature: Managing locales
     Scenario: Creating new locale
         Given I am on the locale creation page
         When I fill in "Code" with "pl_PL"
+        And I fill in "Currency" with "PLN"
         And I press "Create"
         Then I should be on the locale index page
         And I should see "Locale has been successfully created."
@@ -41,6 +44,7 @@ Feature: Managing locales
     Scenario: Locales have to be unique
         Given I am on the locale creation page
         When I fill in "Code" with "de_DE"
+        And I fill in "Currency" with "EUR"
         And I press "Create"
         Then I should still be on the locale creation page
         And I should see "This locale already exists."

@@ -406,6 +406,7 @@ class CoreContext extends DefaultContext
         foreach ($table->getHash() as $data) {
             $locale = $repository->createNew();
             $locale->setCode($data['code']);
+            $locale->setCurrency($data['currency']);
 
             if (isset($data['enabled'])) {
                 $locale->setEnabled('yes' === $data['enabled']);

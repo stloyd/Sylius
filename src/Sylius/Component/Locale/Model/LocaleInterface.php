@@ -35,16 +35,30 @@ interface LocaleInterface extends TimestampableInterface
     public function setCode($code);
 
     /**
+     * Get locale currency.
+     *
+     * @return string
+     */
+    public function getCurrency();
+
+    /**
+     * Set currency.
+     *
+     * @param string $currency
+     */
+    public function setCurrency($currency);
+
+    /**
      * Is activated?
      *
-     * @return Boolean
+     * @return bool
      */
     public function isEnabled();
 
     /**
      * Set activation status.
      *
-     * @param Boolean $enabled
+     * @param bool $enabled
      */
     public function setEnabled($enabled);
 }
