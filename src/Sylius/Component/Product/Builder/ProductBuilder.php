@@ -11,9 +11,8 @@
 
 namespace Sylius\Component\Product\Builder;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Sylius\Component\Product\Model\ProductInterface;
-use Sylius\Component\Resource\Repository\RepositoryInterface;
+use Sylius\Component\Resource\Builder\AbstractBuilder;
 
 /**
  * Product builder with fluent interface.
@@ -22,125 +21,66 @@ use Sylius\Component\Resource\Repository\RepositoryInterface;
  *
  * <code>
  * <?php
- * $this->get('sylius.product_builder')
- *     ->create('Github mug')
- *     ->setDescription("Coffee. Tea. Coke. Water. Let's face it — humans need to drink liquids")
- *     ->setPrice(1200)
- *     ->addAttribute('collection', 2013)
- *     ->save()
- * ;
+ * $product = $this->get('sylius.product_builder')->build(array(
+ *     'name'        => 'Github mug',
+ *     'description' => "Coffee. Tea. Coke. Water. Let's face it — humans need to drink liquids",
+ *     'price'       => 1200,
+ *     'attribute'   => array(
+ *         'value'     => 'collection',
+ *         'attribute' => '2013',
+ *     ),
+ * ));
  * </code>
  *
  * @author Saša Stamenković <umpirsky@gmail.com>
  */
-class ProductBuilder implements ProductBuilderInterface
+class ProductBuilder extends AbstractBuilder
 {
     /**
      * Currently built product.
      *
      * @var ProductInterface
      */
-    protected $product;
-
-    /**
-     * Product object manager.
-     *
-     * @var ObjectManager
-     */
-    protected $productManager;
-
-    /**
-     * Product repository.
-     *
-     * @var RepositoryInterface
-     */
-    protected $productRepository;
-
-    /**
-     * Attribute repository.
-     *
-     * @var RepositoryInterface
-     */
-    protected $attributeRepository;
-
-    /**
-     * Product attribute repository.
-     *
-     * @var RepositoryInterface
-     */
-    protected $attributeValueRepository;
-
-    public function __construct(
-        ObjectManager      $productManager,
-        RepositoryInterface $productRepository,
-        RepositoryInterface $attributeRepository,
-        RepositoryInterface $attributeValueRepository
-    )
-    {
-        $this->productManager            = $productManager;
-        $this->productRepository         = $productRepository;
-        $this->attributeRepository        = $attributeRepository;
-        $this->attributeValueRepository = $attributeValueRepository;
-    }
+    private $product;
 
     /**
      * {@inheritdoc}
      */
-    public function __call($method, $arguments)
+    public function build(array $data)
     {
-        if (!method_exists($this->product, $method)) {
-            throw new \BadMethodCallException(sprintf('Product has no "%s()" method.', $method));
+        if (!isset($data['name'])) {
+            throw new \InvalidArgumentException('Name field must be set!');
+        } else {
+            $this->create($data['name']);
+
+            unset($data['name']);
         }
 
-        call_user_func_array(array($this->product, $method), $arguments);
+        foreach ($data as $field => $value) {
+            if ('attribute' === $field && $this->registry->has('attribute_value')) {
+                $this->product->addAttribute($this->registry->get('attribute_value')->build($value));
 
-        return $this;
+                continue;
+            }
+
+            $this->setField($this->product, $field, $value);
+        }
+
+        $this->save($this->product);
+
+        return $this->product;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function create($name)
+    private function create($name, $persistAndFlush = false)
     {
-        $this->product = $this->productRepository->createNew();
+        $this->product = $this->repository->createNew();
         $this->product->setName($name);
 
-        return $this;
-    }
-
-    public function addAttribute($name, $value, $presentation = null)
-    {
-        $attribute = $this->attributeRepository->findOneBy(array('name' => $name));
-
-        if (null === $attribute) {
-            $attribute = $this->attributeRepository->createNew();
-
-            $attribute->setName($name);
-            $attribute->setPresentation($presentation ?: $name);
-
-            $this->productManager->persist($attribute);
-            $this->productManager->flush($attribute);
-        }
-
-        $attributeValue = $this->attributeValueRepository->createNew();
-
-        $attributeValue->setAttribute($attribute);
-        $attributeValue->setValue($value);
-
-        $this->product->addAttribute($attributeValue);
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function save($flush = true)
-    {
-        $this->productManager->persist($this->product);
-
-        if ($flush) {
-            $this->productManager->flush();
+        if ($persistAndFlush) {
+            $this->save($this->product);
         }
 
         return $this->product;
