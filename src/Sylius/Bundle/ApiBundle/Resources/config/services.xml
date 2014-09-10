@@ -24,6 +24,14 @@
             <argument type="service" id="fos_oauth_server.entity_manager" />
             <argument>%fos_oauth_server.model.client.class%</argument>
         </service>
+
+        <service id="sylius.security.api_key_authenticator" class="Sylius\Bundle\ApiBundle\Security\ApiKeyAuthenticator">
+            <argument type="service" id="sylius.user_provider.api_key" />
+        </service>
+
+        <service id="sylius.user_provider.api_key" class="Sylius\Bundle\ApiBundle\Security\ApiKeyUserProvider">
+            <argument type="service" id="sylius.repository.user" />
+        </service>
     </services>
 
 </container>

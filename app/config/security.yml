@@ -5,8 +5,12 @@ security:
     providers:
         sylius_user_provider:
             id: sylius.user_provider.name_or_email
+        sylius_api_key:
+            id: sylius.user_provider.api_key
+
     encoders:
         Sylius\Component\User\Model\UserInterface: sha512
+
     firewalls:
         admin:
             switch_user: true
@@ -43,10 +47,12 @@ security:
             anonymous: true
 
         api:
-            pattern:    ^/api
-            fos_oauth:  true
-            stateless:  true
-            anonymous:  true
+            pattern:   ^/api
+            fos_oauth: true
+            stateless: true
+            anonymous: true
+            simple_preauth:
+                authenticator: sylius.user_provider.api_key
 
         main:
             switch_user: { role: ROLE_ALLOWED_TO_SWITCH }
@@ -58,7 +64,7 @@ security:
                 check_path: /login_check
                 failure_path: /login
                 default_target_path: /
-                use_forward:  false
+                use_forward: false
                 use_referer: true
             remember_me:
                 key: %sylius.secret%
