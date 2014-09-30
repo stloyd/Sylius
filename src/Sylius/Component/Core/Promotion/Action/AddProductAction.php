@@ -11,8 +11,10 @@
 
 namespace Sylius\Component\Core\Promotion\Action;
 
+use Sylius\Component\Cart\Resolver\ItemResolverInterface;
+use Sylius\Component\Cart\Resolver\ItemResolvingException;
+use Sylius\Component\Core\Model\OrderItemInterface;
 use Sylius\Component\Order\Model\OrderInterface;
-use Sylius\Component\Order\Model\OrderItemInterface;
 use Sylius\Component\Promotion\Action\PromotionActionInterface;
 use Sylius\Component\Promotion\Model\PromotionInterface;
 use Sylius\Component\Promotion\Model\PromotionSubjectInterface;
@@ -41,15 +43,33 @@ class AddProductAction implements PromotionActionInterface
     protected $variantRepository;
 
     /**
+     * @var ItemResolverInterface
+     */
+    protected $restrictedZoneResolver;
+
+    /**
+     * @var ItemResolverInterface
+     */
+    protected $availabilityResolver;
+
+    /**
      * Constructor.
      *
-     * @param RepositoryInterface $itemRepository
-     * @param RepositoryInterface $variantRepository
+     * @param RepositoryInterface   $itemRepository
+     * @param RepositoryInterface   $variantRepository
+     * @param ItemResolverInterface $restrictedZoneResolver
+     * @param ItemResolverInterface $availabilityResolver
      */
-    public function __construct(RepositoryInterface $itemRepository, RepositoryInterface $variantRepository)
-    {
-        $this->itemRepository    = $itemRepository;
-        $this->variantRepository = $variantRepository;
+    public function __construct(
+        RepositoryInterface $itemRepository,
+        RepositoryInterface $variantRepository,
+        ItemResolverInterface $restrictedZoneResolver,
+        ItemResolverInterface $availabilityResolver
+    ) {
+        $this->itemRepository         = $itemRepository;
+        $this->variantRepository      = $variantRepository;
+        $this->restrictedZoneResolver = $restrictedZoneResolver;
+        $this->availabilityResolver   = $availabilityResolver;
     }
 
     /**
@@ -71,6 +91,13 @@ class AddProductAction implements PromotionActionInterface
             if ($item->equals($promotionItem)) {
                 return;
             }
+        }
+
+        try {
+            $this->restrictedZoneResolver->resolve($promotionItem, $promotionItem->getProduct());
+            $this->availabilityResolver->resolve($promotionItem, array());
+        } catch (ItemResolvingException $e) {
+            return;
         }
 
         $subject->addItem($promotionItem);
@@ -107,7 +134,7 @@ class AddProductAction implements PromotionActionInterface
     }
 
     /**
-     * Create promotion item
+     * Create promotion item.
      *
      * @param array $configuration
      *

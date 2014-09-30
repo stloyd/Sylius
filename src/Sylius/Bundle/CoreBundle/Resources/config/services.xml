@@ -354,6 +354,8 @@
         <service id="sylius.promotion_action.add_product" class="%sylius.promotion_action.add_product.class%">
             <argument type="service" id="sylius.repository.order_item" />
             <argument type="service" id="sylius.repository.product_variant" />
+            <argument type="service" id="sylius.item_resolver.restricted_zone" />
+            <argument type="service" id="sylius.item_resolver.inventory_availability" />
             <tag name="sylius.promotion_action" type="add_product" label="Add product" />
         </service>
 
