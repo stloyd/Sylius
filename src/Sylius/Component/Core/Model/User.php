@@ -21,6 +21,7 @@ use FOS\UserBundle\Model\User as BaseUser;
  */
 class User extends BaseUser implements UserInterface
 {
+    protected $apiKey;
     protected $firstName;
     protected $lastName;
     protected $createdAt;
@@ -41,6 +42,22 @@ class User extends BaseUser implements UserInterface
         $this->oauthAccounts = new ArrayCollection();
 
         parent::__construct();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getApiKey()
+    {
+        return $this->apiKey;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setApiKey($apiKey)
+    {
+        $this->apiKey = $apiKey;
     }
 
     /**

@@ -22,6 +22,14 @@
             <argument>%sylius.validation_group.api_client%</argument>
             <tag name="form.type" alias="sylius_api_client" />
         </service>
+
+        <service id="sylius.security.api_key_authenticator" class="Sylius\Bundle\ApiBundle\Security\ApiKeyAuthenticator">
+            <argument type="service" id="sylius.security.api_key_user_provider" />
+        </service>
+
+        <service id="sylius.security.api_key_user_provider" class="Sylius\Bundle\ApiBundle\Security\ApiKeyUserProvider">
+            <argument type="service" id="sylius.repository.user" />
+        </service>
     </services>
 
 </container>
