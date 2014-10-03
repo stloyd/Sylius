@@ -48,12 +48,22 @@ interface CurrencyInterface extends TimestampableInterface
     public function setExchangeRate($rate);
 
     /**
-     * @return Boolean
+     * @return bool
      */
     public function isEnabled();
 
     /**
-     * @param Boolean $enabled
+     * @param bool $enabled
      */
     public function setEnabled($enabled);
+
+    /**
+     * @return bool
+     */
+    public function isBase();
+
+    /**
+     * @param bool $base
+     */
+    public function setBase($base);
 }

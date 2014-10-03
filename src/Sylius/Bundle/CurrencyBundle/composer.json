@@ -25,7 +25,8 @@
         "sylius/currency":          "0.14.*@dev",
         "sylius/money-bundle":      "0.14.*@dev",
         "sylius/resource-bundle":   "0.14.*@dev",
-        "symfony/framework-bundle": "~2.3"
+        "symfony/framework-bundle": "~2.3",
+        "guzzle/http":              "~3.9"
     },
     "require-dev": {
         "phpspec/phpspec": "~2.1",

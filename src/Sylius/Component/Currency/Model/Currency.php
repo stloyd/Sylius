@@ -21,7 +21,7 @@ use Symfony\Component\Intl\Intl;
 class Currency implements CurrencyInterface
 {
     /**
-     * @var mixed
+     * @var int
      */
     protected $id;
 
@@ -36,9 +36,14 @@ class Currency implements CurrencyInterface
     protected $exchangeRate;
 
     /**
-     * @var Boolean
+     * @var bool
      */
     protected $enabled = true;
+
+    /**
+     * @var bool
+     */
+    protected $base = false;
 
     /**
      * @var \DateTime
@@ -125,7 +130,23 @@ class Currency implements CurrencyInterface
      */
     public function setEnabled($enabled)
     {
-        $this->enabled = (Boolean) $enabled;
+        $this->enabled = (bool) $enabled;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isBase()
+    {
+        return $this->base;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setBase($base)
+    {
+        $this->base = (bool) $base;
     }
 
     /**

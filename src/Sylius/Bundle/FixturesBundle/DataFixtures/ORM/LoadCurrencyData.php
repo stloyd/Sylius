@@ -36,7 +36,7 @@ class LoadCurrencyData extends DataFixture
 
         foreach ($this->currencies as $code => $rate) {
             $currency = $currencyRepository->createNew();
-
+            $currency->setBase('EUR' === $code);
             $currency->setCode($code);
             $currency->setExchangeRate($rate);
             $currency->setEnabled(true);

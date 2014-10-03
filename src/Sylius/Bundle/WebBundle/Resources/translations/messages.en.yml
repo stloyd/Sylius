@@ -149,6 +149,7 @@ sylius:
         content: Content
         currency:
             index: Currencies
+            settings: Exchange Rates Settings
         general_settings: General Settings
         generate: Generate
         group:
@@ -348,6 +349,12 @@ sylius:
         exchange_rate: Exchange rate
         update_header: Editing currency
         updated_at: Last update
+        update_all_rates: Update All Rates
+        form:
+            select_provider: Exchange Rate Provider
+        messages:
+            success: Currency rates are updated
+            error: Currency rates are not updated
     filter: Filter
     form:
         cart:
@@ -785,6 +792,7 @@ sylius:
     settings:
         general_header: General settings
         taxation_header: Taxation settings
+        exchange_rates_header: Exchange rates settings
     shipment_category:
         manage: Manage shipping categories
     shipping_address: Shipping address

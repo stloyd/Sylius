@@ -34,6 +34,9 @@ class CurrencyType extends AbstractResourceType
             ->add('exchangeRate', 'number', array(
                 'label' => 'sylius.form.currency.exchange_rate'
             ))
+            ->add('base', 'checkbox', array(
+                'label' => 'sylius.form.currency.is_base'
+            ))
             ->add('enabled', 'checkbox', array(
                 'label' => 'sylius.form.currency.enabled'
             ))
