@@ -23,6 +23,20 @@ use Sylius\Component\Resource\Model\TimestampableInterface;
 interface UserInterface extends BaseUserInterface, TimestampableInterface
 {
     /**
+     * Get API key for user.
+     *
+     * @return null|string
+     */
+    public function getApiKey();
+
+    /**
+     * Set API key for user.
+     *
+     * @param string $apiKey
+     */
+    public function setApiKey($apiKey);
+
+    /**
      * Get first name.
      *
      * @return string

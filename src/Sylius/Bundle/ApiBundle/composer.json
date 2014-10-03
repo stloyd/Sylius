@@ -24,6 +24,7 @@
 
         "sylius/resource-bundle":               "0.12.*@dev",
         "symfony/framework-bundle":             "~2.3",
+        "symfony/security":                     "~2.4",
         "friendsofsymfony/oauth-server-bundle": "~1.4"
     },
     "require-dev": {
