@@ -20,7 +20,7 @@
         }
     ],
     "require": {
-        "php":                      ">=5.3.3",
+        "php":                                  ">=5.3.3",
 
         "sylius/resource-bundle":               "0.13.*@dev",
         "symfony/framework-bundle":             "~2.3",
@@ -28,9 +28,9 @@
     },
     "require-dev": {
         "symfony/form":           "~2.3",
-        "twig/twig":              "~1.0",
-        "phpspec/phpspec":        "~2.0",
-        "phpunit/phpunit":        "~3.7",
+        "twig/twig":              "~1.11",
+        "phpspec/phpspec":        "~2.1",
+        "phpunit/phpunit":        "~4.1",
         "sylius/fixtures-bundle": "0.13.*@dev"
     },
     "config": {
