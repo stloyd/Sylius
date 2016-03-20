@@ -1,0 +1,5 @@
+suites:
+    main:
+        namespace: Sylius\Bundle\LoyaltyBundle
+        psr4_prefix: Sylius\Bundle\LoyaltyBundle
+        src_path: .

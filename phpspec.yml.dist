@@ -11,6 +11,7 @@ suites:
     Grid: { namespace: Sylius\Component\Grid, psr4_prefix: Sylius\Component\Grid, spec_path: src/Sylius/Component/Grid, src_path: src/Sylius/Component/Grid }
     Inventory: { namespace: Sylius\Component\Inventory, psr4_prefix: Sylius\Component\Inventory, spec_path: src/Sylius/Component/Inventory, src_path: src/Sylius/Component/Inventory }
     Locale: { namespace: Sylius\Component\Locale, psr4_prefix: Sylius\Component\Locale, spec_path: src/Sylius/Component/Locale, src_path: src/Sylius/Component/Locale }
+    Loyalty: { namespace: Sylius\Component\Loyalty, psr4_prefix: Sylius\Component\Loyalty, spec_path: src/Sylius/Component/Loyalty, src_path: src/Sylius/Component/Loyalty }
     Mailer: { namespace: Sylius\Component\Mailer, psr4_prefix: Sylius\Component\Mailer, spec_path: src/Sylius/Component/Mailer, src_path: src/Sylius/Component/Mailer }
     Metadata: { namespace: Sylius\Component\Metadata, psr4_prefix: Sylius\Component\Metadata, spec_path: src/Sylius/Component/Metadata, src_path: src/Sylius/Component/Metadata }
     Order: { namespace: Sylius\Component\Order, psr4_prefix: Sylius\Component\Order, spec_path: src/Sylius/Component/Order, src_path: src/Sylius/Component/Order }
@@ -49,6 +50,7 @@ suites:
     InstallerBundle: { namespace: Sylius\Bundle\InstallerBundle, psr4_prefix: Sylius\Bundle\InstallerBundle, spec_path: src/Sylius/Bundle/InstallerBundle, src_path: src/Sylius/Bundle/InstallerBundle }
     InventoryBundle: { namespace: Sylius\Bundle\InventoryBundle, psr4_prefix: Sylius\Bundle\InventoryBundle, spec_path: src/Sylius/Bundle/InventoryBundle, src_path: src/Sylius/Bundle/InventoryBundle }
     LocaleBundle: { namespace: Sylius\Bundle\LocaleBundle, psr4_prefix: Sylius\Bundle\LocaleBundle, spec_path: src/Sylius/Bundle/LocaleBundle, src_path: src/Sylius/Bundle/LocaleBundle }
+    LoyaltyBundle: { namespace: Sylius\Bundle\LoyaltyBundle, psr4_prefix: Sylius\Bundle\LoyaltyBundle, spec_path: src/Sylius/Bundle/LoyaltyBundle, src_path: src/Sylius/Bundle/LoyaltyBundle }
     MailerBundle: { namespace: Sylius\Bundle\MailerBundle, psr4_prefix: Sylius\Bundle\MailerBundle, spec_path: src/Sylius/Bundle/MailerBundle, src_path: src/Sylius/Bundle/MailerBundle }
     MetadataBundle: { namespace: Sylius\Bundle\MetadataBundle, psr4_prefix: Sylius\Bundle\MetadataBundle, spec_path: src/Sylius/Bundle/MetadataBundle, src_path: src/Sylius/Bundle/MetadataBundle }
     MoneyBundle: { namespace: Sylius\Bundle\MoneyBundle, psr4_prefix: Sylius\Bundle\MoneyBundle, spec_path: src/Sylius/Bundle/MoneyBundle, src_path: src/Sylius/Bundle/MoneyBundle }
