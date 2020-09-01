@@ -57,9 +57,9 @@ final class CommandExecutorSpec extends ObjectBehavior
         $arrayInput = new ArrayInput(
             [
                 'command' => 'command',
-                '--no-debug' => true,
+                '--no-debug' => '1',
                 '--env' => 'dev',
-                '--verbose' => true,
+                '--verbose' => '1',
             ]
         );
 
@@ -99,16 +99,16 @@ final class CommandExecutorSpec extends ObjectBehavior
         $arrayInput = new ArrayInput(
             [
                 'command' => 'command',
-                '--no-debug' => true,
+                '--no-debug' => '1',
                 '--env' => 'dev',
-                '--no-interaction' => true,
-                '--verbose' => true,
+                '--no-interaction' => '1',
+                '--verbose' => '1',
             ]
         );
 
         $application->setAutoExit(false)->shouldBeCalled();
         $application->run($arrayInput, new NullOutput())->willReturn(0);
 
-        $this->runCommand('command', ['--no-interaction' => true]);
+        $this->runCommand('command', ['--no-interaction' => '1']);
     }
 }

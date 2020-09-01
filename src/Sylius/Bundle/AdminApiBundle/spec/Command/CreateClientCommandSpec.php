@@ -17,16 +17,15 @@ use FOS\OAuthServerBundle\Model\ClientManager;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use Sylius\Bundle\AdminApiBundle\Model\Client;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 final class CreateClientCommandSpec extends ObjectBehavior
 {
-    public function it_is_a_container_aware_command()
+    public function it_is_a_command()
     {
-        $this->shouldHaveType(ContainerAwareCommand::class);
+        $this->shouldHaveType(Command::class);
     }
 
     public function it_has_a_name()
@@ -35,18 +34,18 @@ final class CreateClientCommandSpec extends ObjectBehavior
     }
 
     public function it_creates_a_client_without_client_manager(
-        ContainerInterface $container,
         InputInterface $input,
         OutputInterface $output,
         ClientManager $clientManager,
         Client $client
     ) {
+        $this->beConstructedWith($clientManager);
+
         $input->bind(Argument::any())->shouldBeCalled();
         $input->isInteractive()->shouldBeCalled();
         $input->validate()->shouldBeCalled();
         $input->hasArgument('command')->willReturn(false);
 
-        $container->get('fos_oauth_server.client_manager.default')->willReturn($clientManager);
         $clientManager->createClient()->willReturn($client);
 
         $input->getOption('redirect-uri')->willReturn(['redirect-uri']);
@@ -62,25 +61,22 @@ final class CreateClientCommandSpec extends ObjectBehavior
 
         $output->writeln(Argument::type('string'))->shouldBeCalled();
 
-        $this->setContainer($container);
         $this->run($input, $output);
     }
 
     public function it_creates_a_client(
-        ContainerInterface $container,
         InputInterface $input,
         OutputInterface $output,
         ClientManager $clientManager,
         Client $client
     ) {
-        $this->beConstructedWith(null, $clientManager);
+        $this->beConstructedWith($clientManager);
 
         $input->bind(Argument::any())->shouldBeCalled();
         $input->isInteractive()->shouldBeCalled();
         $input->validate()->shouldBeCalled();
         $input->hasArgument('command')->willReturn(false);
 
-        $container->get('fos_oauth_server.client_manager.default')->willReturn($clientManager);
         $clientManager->createClient()->willReturn($client);
 
         $input->getOption('redirect-uri')->willReturn(['redirect-uri']);
@@ -96,7 +92,6 @@ final class CreateClientCommandSpec extends ObjectBehavior
 
         $output->writeln(Argument::type('string'))->shouldBeCalled();
 
-        $this->setContainer($container);
         $this->run($input, $output);
     }
 }

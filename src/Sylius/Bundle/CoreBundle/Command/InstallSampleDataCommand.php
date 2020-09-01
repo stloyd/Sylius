@@ -36,29 +36,29 @@ EOT
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): ?int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         /** @var QuestionHelper $questionHelper */
         $questionHelper = $this->getHelper('question');
-        $suite = $input->getOption('fixture-suite');
+        $suite = $input->getOption('fixture-suite') ?? 'default';
 
         $outputStyle = new SymfonyStyle($input, $output);
         $outputStyle->newLine();
         $outputStyle->writeln(sprintf(
             'Loading sample data for environment <info>%s</info> from suite <info>%s</info>.',
             $this->getEnvironment(),
-            $suite ?? 'default'
+            $suite
         ));
         $outputStyle->writeln('<error>Warning! This action will erase your database.</error>');
 
-        if (!$questionHelper->ask($input, $output, new ConfirmationQuestion('Continue? (y/N) ', null !== $suite))) {
+        if (!$questionHelper->ask($input, $output, new ConfirmationQuestion('Continue? (y/N) ', 'default' !== $suite))) {
             $outputStyle->writeln('Cancelled loading sample data.');
 
             return 0;
         }
 
         try {
-            $publicDir = $this->getContainer()->getParameter('sylius_core.public_dir');
+            $publicDir = $this->container->getParameter('sylius_core.public_dir');
 
             $this->ensureDirectoryExistsAndIsWritable($publicDir . '/media/', $output);
             $this->ensureDirectoryExistsAndIsWritable($publicDir . '/media/image/', $output);
@@ -70,7 +70,7 @@ EOT
 
         $parameters = [
             'suite' => $suite,
-            '--no-interaction' => true,
+            '--no-interaction' => '1',
         ];
 
         $commands = [
@@ -80,6 +80,6 @@ EOT
         $this->runCommands($commands, $output);
         $outputStyle->newLine(2);
 
-        return null;
+        return 0;
     }
 }

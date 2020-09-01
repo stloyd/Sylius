@@ -70,18 +70,18 @@ final class CommandExecutor
 
     private function getDefaultParameters(): array
     {
-        $defaultParameters = ['--no-debug' => true];
+        $defaultParameters = ['--no-debug' => '1'];
 
         if ($this->input->hasOption('env')) {
             $defaultParameters['--env'] = $this->input->hasOption('env') ? $this->input->getOption('env') : 'dev';
         }
 
         if ($this->input->hasOption('no-interaction') && true === $this->input->getOption('no-interaction')) {
-            $defaultParameters['--no-interaction'] = true;
+            $defaultParameters['--no-interaction'] = '1';
         }
 
         if ($this->input->hasOption('verbose') && true === $this->input->getOption('verbose')) {
-            $defaultParameters['--verbose'] = true;
+            $defaultParameters['--verbose'] = '1';
         }
 
         return $defaultParameters;
