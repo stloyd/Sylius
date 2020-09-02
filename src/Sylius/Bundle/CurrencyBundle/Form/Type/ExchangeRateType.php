@@ -64,7 +64,7 @@ final class ExchangeRateType extends AbstractResourceType
     {
         parent::configureOptions($resolver);
 
-        $resolver->setDefault('rounding_mode', NumberToLocalizedStringTransformer::ROUND_HALF_EVEN);
+        $resolver->setDefault('rounding_mode', \NumberFormatter::ROUND_HALFEVEN);
     }
 
     public function getBlockPrefix()
